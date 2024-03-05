@@ -1,6 +1,10 @@
+import 'dart:html';
+import 'dart:js_interop';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lib_manage/firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,19 +58,59 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   createData() {
-    print("Created");
+    DocumentReference documentReference =
+        FirebaseFirestore.instance.collection('MyStudents').doc(studentName);
+    Map<String, dynamic> students = {
+      'studentName': studentName,
+      'studentID': studentID,
+      'studyProgramID': studyProgramID,
+      'studentGPA': studentGPA
+    };
+
+    documentReference.set(students).whenComplete(() {
+      print('$studentName created');
+    });
   }
 
+// var a = user.userLocation() as Map;
+// print(a['location]['city']);
+
+  // var data = dataSnapshot.value as Map?;
+
   readData() {
-    print("Read");
+    DocumentReference documentReference =
+        FirebaseFirestore.instance.collection('MyStudents').doc(studentName);
+
+    documentReference.get().then((datasnapshot) {
+      var a = datasnapshot.data() as Map;
+      print(a['studentName']);
+      print(a['studentID']);
+      print(a['studyProgramID']);
+      print(a['studentGPA']);
+    });
   }
 
   updateData() {
-    print("Updated");
+    DocumentReference documentReference =
+        FirebaseFirestore.instance.collection('MyStudents').doc(studentName);
+    Map<String, dynamic> students = {
+      'studentName': studentName,
+      'studentID': studentID,
+      'studyProgramID': studyProgramID,
+      'studentGPA': studentGPA
+    };
+
+    documentReference.set(students).whenComplete(() {
+      print('$studentName created');
+    });
   }
 
   deleteData() {
-    print("Deleted");
+    DocumentReference documentReference =
+        FirebaseFirestore.instance.collection("MyStudents").doc(studentName);
+    documentReference.delete().whenComplete(() {
+      print('$studentName deleted');
+    });
   }
 
   @override
@@ -173,6 +217,62 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: const Text('Delete'),
               ),
             ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              textDirection: TextDirection.ltr,
+              children: [
+                Expanded(child: Text("Name")),
+                Expanded(child: Text("Student ID")),
+                Expanded(child: Text("Study Program ID")),
+                Expanded(child: Text("GPA")),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("MyStudents")
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      DocumentSnapshot documentSnapshot =
+                          snapshot.data!.docs[index];
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: Text(documentSnapshot['studentName']),
+                          ),
+                          Expanded(
+                            child: Text(documentSnapshot['studentID']),
+                          ),
+                          Expanded(
+                            child: Text(documentSnapshot['studyProgramID']),
+                          ),
+                          Expanded(
+                            child:
+                                Text(documentSnapshot['studentGPA'].toString()),
+                          )
+                        ],
+                      );
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: CircularProgressIndicator(),
+                  ); // Or any other loading indicator
+                }
+              },
+            ),
           )
         ],
       ),
