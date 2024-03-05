@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "813058254079",
+    "project_id": "lib-management-8913c",
+    "storage_bucket": "lib-management-8913c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:813058254079:android:fdcf90706f2374ea7858ca",
+        "android_client_info": {
+          "package_name": "com.example.lib_manage"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2toEjqQgrFhL6iiTY7JHg0mV9EEcsUkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
